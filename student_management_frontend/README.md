@@ -37,6 +37,30 @@ The app reads URLs and simple settings from environment variables:
 
 Endpoints should not be hardcoded; configure via env variables.
 
+### Wiring real backend endpoints (Students)
+
+The student API client is defined in `src/api/client.js` under `api.students`. By default it uses these paths:
+- `GET ${REACT_APP_API_BASE}/students` - list students
+- `POST ${REACT_APP_API_BASE}/students` - create student
+- `PUT ${REACT_APP_API_BASE}/students/:id` - update student
+- `DELETE ${REACT_APP_API_BASE}/students/:id` - delete student
+
+If your backend uses different paths, update them at runtime by overriding endpoints:
+```js
+import { api } from './api/client';
+
+api.students.endpoints = {
+  list: '/v1/sis/students',
+  create: '/v1/sis/students',
+  update: (id) => `/v1/sis/students/${id}`,
+  delete: (id) => `/v1/sis/students/${id}`,
+};
+```
+
+Notes:
+- When `REACT_APP_API_BASE` is not set, the frontend runs in client-only mode. The Students page still works with local state and optimistic patterns; network calls are no-ops that return mock-like results.
+- Required student fields: `name`, `class`, `section`, `rollNumber`. The UI validates required fields and ensures `rollNumber` is unique within a `class + section` combination.
+
 ## Learn More
 
 To learn React, check out the [React documentation](https://reactjs.org/).
