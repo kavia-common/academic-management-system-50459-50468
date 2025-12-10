@@ -25,6 +25,18 @@ export const authApi = {
 
   /**
    * PUBLIC_INTERFACE
+   * Register a new user.
+   * Placeholder that posts to '/auth/register'. The backend should return:
+   * { token: string, user: { id, email, name, role } }
+   */
+  async register({ name, email, password, role = 'teacher' }) {
+    const path = authPath('auth/register');
+    const res = await api.post(path, { name, email, password, role });
+    return res;
+  },
+
+  /**
+   * PUBLIC_INTERFACE
    * Fetch profile of the current user using a bearer token.
    * This is a placeholder that GETs '/auth/me'.
    */

@@ -8,12 +8,12 @@ import AppRouter from './routes/AppRouter';
 import { applyThemeToDocument } from './theme/theme';
 import { AuthProvider } from './auth/AuthContext';
 
-// Layout component to conditionally render chrome (sidebar/topbar) excluding login page
+// Layout component to conditionally render chrome (sidebar/topbar) excluding login/signup pages
 function Shell() {
   const location = useLocation();
-  const isLogin = location.pathname === '/login';
+  const isAuthPublic = location.pathname === '/login' || location.pathname === '/signup';
 
-  if (isLogin) {
+  if (isAuthPublic) {
     return (
       <main role="main">
         <AppRouter />

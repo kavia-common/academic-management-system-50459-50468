@@ -6,19 +6,21 @@ import Courses from '../pages/Courses';
 import Attendance from '../pages/Attendance';
 import Settings from '../pages/Settings';
 import Login from '../pages/Login';
+import Signup from '../pages/Signup';
 import { ProtectedRoute, RoleRoute } from '../auth/ProtectedRoute';
 
 // PUBLIC_INTERFACE
 export default function AppRouter() {
   /**
    * Application router with authentication and role-based protections:
-   * - /login is public
+   * - /login and /signup are public
    * - /settings is admin-only
    * - students/courses/attendance are protected for admin or teacher
    */
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<Dashboard />} />
         {/* Shared views for admin and teacher */}

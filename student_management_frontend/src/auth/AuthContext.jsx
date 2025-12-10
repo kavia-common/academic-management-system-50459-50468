@@ -23,6 +23,7 @@ export const AuthContext = createContext({
   isAuthenticated: false,
   // Methods
   login: async (_email, _password) => {},
+  register: async (_name, _email, _password, _role) => ({ ok: false }),
   logout: () => {},
   refreshProfile: async () => {},
   hasRole: (_role) => false,
@@ -111,6 +112,24 @@ export function AuthProvider({ children }) {
     }
   }, [location.state, navigate]);
 
+  const register = useCallback(async (name, email, password, role = 'teacher') => {
+    setLoading(true);
+    try {
+      const res = await authApi.register({ name, email, password, role });
+      setToken(res?.token || null);
+      setUser(res?.user || null);
+
+      // After signup, redirect based on role
+      const dest = res?.user?.role === 'admin' ? '/settings' : '/dashboard';
+      navigate(dest, { replace: true });
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e?.body?.message || e?.message || 'Signup failed' };
+    } finally {
+      setLoading(false);
+    }
+  }, [navigate]);
+
   const logout = useCallback(() => {
     setToken(null);
     setUser(null);
@@ -140,11 +159,12 @@ export function AuthProvider({ children }) {
     token,
     isAuthenticated: !!token && !!user,
     login,
+    register,
     logout,
     refreshProfile,
     hasRole,
     loading,
-  }), [user, token, login, logout, refreshProfile, hasRole, loading]);
+  }), [user, token, login, register, logout, refreshProfile, hasRole, loading]);
 
   return (
     <AuthContext.Provider value={value}>

@@ -54,7 +54,10 @@ export default function Login() {
                 {error}
               </div>
             ) : null}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 6 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginTop: 6 }}>
+              <a className="btn ghost" href="/signup" style={{ textDecoration: 'none' }}>
+                Create account
+              </a>
               <Button type="submit" disabled={submitting}>
                 {submitting ? 'Signing in…' : 'Sign in'}
               </Button>
