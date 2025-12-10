@@ -6,21 +6,11 @@ function buildUrl(path = '') {
   return `${config.baseUrl}${normalized}`;
 }
 
-function getToken() {
-  try {
-    return localStorage.getItem('ams_auth_token');
-  } catch {
-    return null;
-  }
-}
-
-// Basic wrapper
+// Basic wrapper (no auth headers)
 async function request(path, options = {}) {
   const url = buildUrl(path);
-  const token = getToken();
   const headers = {
     'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...(options.headers || {}),
   };
   const resp = await fetch(url, { ...options, headers });
