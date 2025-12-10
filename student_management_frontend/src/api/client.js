@@ -214,4 +214,142 @@ export const api = {
       return api.get(path);
     },
   },
+
+  // PUBLIC_INTERFACE
+  classes: {
+    /**
+     * Placeholder endpoints for classes and class-subject-teacher assignments.
+     * Override these at runtime to match your backend paths.
+     */
+    endpoints: {
+      listClasses: '/classes',
+      createClass: '/classes',
+      updateClass: (id) => `/classes/${encodeURIComponent(id)}`,
+      deleteClass: (id) => `/classes/${encodeURIComponent(id)}`,
+
+      listSubjects: (classId) => `/classes/${encodeURIComponent(classId)}/subjects`,
+      createSubject: (classId) => `/classes/${encodeURIComponent(classId)}/subjects`,
+      updateSubject: (classId, classSubjectId) => `/classes/${encodeURIComponent(classId)}/subjects/${encodeURIComponent(classSubjectId)}`,
+      deleteSubject: (classId, classSubjectId) => `/classes/${encodeURIComponent(classId)}/subjects/${encodeURIComponent(classSubjectId)}`,
+
+      listTeachers: '/teachers',
+      assignSubjectToClass: (classId) => `/classes/${encodeURIComponent(classId)}/subjects`,
+      assignTeacherToSubjectInClass: (classId, classSubjectId) => `/classes/${encodeURIComponent(classId)}/subjects/${encodeURIComponent(classSubjectId)}/teacher`,
+    },
+
+    // PUBLIC_INTERFACE
+    async listClasses() {
+      if (!config.baseUrl) {
+        return []; // client-only: start empty
+      }
+      return api.get(api.classes.endpoints.listClasses);
+    },
+
+    // PUBLIC_INTERFACE
+    async createClass(payload) {
+      if (!config.baseUrl) {
+        return { ...payload, id: `tmp-${Date.now()}` };
+      }
+      return api.post(api.classes.endpoints.createClass, payload);
+    },
+
+    // PUBLIC_INTERFACE
+    async updateClass(id, payload) {
+      if (!config.baseUrl) {
+        return { id, ...payload };
+      }
+      const path = api.classes.endpoints.updateClass(id);
+      return api.put(path, payload);
+    },
+
+    // PUBLIC_INTERFACE
+    async deleteClass(id) {
+      if (!config.baseUrl) {
+        return { ok: true, id };
+      }
+      const path = api.classes.endpoints.deleteClass(id);
+      return api.del(path);
+    },
+
+    // PUBLIC_INTERFACE
+    async listSubjects(classId) {
+      if (!config.baseUrl) {
+        // client-only minimal: no subjects by default
+        return [];
+      }
+      const path = api.classes.endpoints.listSubjects(classId);
+      return api.get(path);
+    },
+
+    // PUBLIC_INTERFACE
+    async createSubject(classId, payload) {
+      if (!config.baseUrl) {
+        return { ...payload, id: `csub-${Date.now()}` };
+      }
+      const path = api.classes.endpoints.createSubject(classId);
+      return api.post(path, payload);
+    },
+
+    // PUBLIC_INTERFACE
+    async updateSubject(classId, classSubjectId, payload) {
+      if (!config.baseUrl) {
+        return { id: classSubjectId, ...payload };
+      }
+      const path = api.classes.endpoints.updateSubject(classId, classSubjectId);
+      return api.put(path, payload);
+    },
+
+    // PUBLIC_INTERFACE
+    async deleteSubject(classId, classSubjectId) {
+      if (!config.baseUrl) {
+        return { ok: true, id: classSubjectId };
+      }
+      const path = api.classes.endpoints.deleteSubject(classId, classSubjectId);
+      return api.del(path);
+    },
+
+    // PUBLIC_INTERFACE
+    async listTeachers() {
+      if (!config.baseUrl) {
+        // client-only minimal teachers placeholder
+        return [
+          { id: 't-1', name: 'Alice Johnson' },
+          { id: 't-2', name: 'Bob Smith' },
+          { id: 't-3', name: 'Carlos Diaz' },
+        ];
+      }
+      return api.get(api.classes.endpoints.listTeachers);
+    },
+
+    // PUBLIC_INTERFACE
+    async assignSubjectToClass(classId, { subjectId, teacherId }) {
+      /**
+       * payload: { subjectId, teacherId? }
+       * Returns class-subject record: { id, subjectId, subjectName?, teacherId?, teacherName? }
+       */
+      if (!config.baseUrl) {
+        return {
+          id: `csub-${Date.now()}`,
+          subjectId,
+          subjectName: undefined,
+          teacherId: teacherId || '',
+          teacherName: undefined,
+        };
+      }
+      const path = api.classes.endpoints.assignSubjectToClass(classId);
+      return api.post(path, { subjectId, teacherId });
+    },
+
+    // PUBLIC_INTERFACE
+    async assignTeacherToSubjectInClass(classId, classSubjectId, teacherIdOrNull) {
+      /**
+       * payload: { teacherId: string | null }
+       */
+      if (!config.baseUrl) {
+        return { ok: true, classSubjectId, teacherId: teacherIdOrNull || '' };
+      }
+      const path = api.classes.endpoints.assignTeacherToSubjectInClass(classId, classSubjectId);
+      return api.put(path, { teacherId: teacherIdOrNull });
+    },
+  },
 };

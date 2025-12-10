@@ -8,7 +8,7 @@ This project provides a minimal React template with a clean, modern UI and minim
 - **Modern UI**: Clean, responsive design with KAVIA brand styling
 - **Fast**: Minimal dependencies for quick loading times
 - **Simple**: Easy to understand and modify
-- **No Authentication**: All pages (Dashboard, Students, Courses, Attendance, Exams, Marks, Results, Settings) are publicly accessible
+- **No Authentication**: All pages (Dashboard, Students, Classes, Courses, Attendance, Exams, Marks, Results, Settings) are publicly accessible
 
 ## Getting Started
 
@@ -41,6 +41,8 @@ Endpoints should not be hardcoded; configure via env variables.
 
 API clients are defined in `src/api/client.js`:
 - `api.students` for students CRUD (see root README for default paths)
+- `api.classes` for classes CRUD, class subjects, and teacher assignment
+  - Override `api.classes.endpoints` to match your backend (see root README for details and typical payload shapes)
 - `api.academics` for exams, subjects, marks, and reports
   - Override `api.academics.endpoints` to match your backend paths without changing code.
   - Example:

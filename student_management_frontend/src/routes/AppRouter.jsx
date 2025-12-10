@@ -8,6 +8,7 @@ import Settings from '../pages/Settings';
 import Exams from '../pages/Exams';
 import Marks from '../pages/Marks';
 import Results from '../pages/Results';
+import Classes from '../pages/Classes';
 
 // PUBLIC_INTERFACE
 export default function AppRouter() {
@@ -24,6 +25,7 @@ export default function AppRouter() {
       <Route path="/exams" element={<Exams />} />
       <Route path="/marks" element={<Marks />} />
       <Route path="/results" element={<Results />} />
+      <Route path="/classes" element={<Classes />} />
       <Route path="/settings" element={<Settings />} />
     </Routes>
   );

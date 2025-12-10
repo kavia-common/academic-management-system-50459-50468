@@ -7,6 +7,7 @@ export default function Sidebar() {
   const links = [
     { to: '/', label: 'Dashboard' },
     { to: '/students', label: 'Students' },
+    { to: '/classes', label: 'Classes' },
     { to: '/courses', label: 'Courses' },
     { to: '/attendance', label: 'Attendance' },
     { to: '/exams', label: 'Exams' },
