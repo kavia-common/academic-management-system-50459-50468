@@ -96,4 +96,122 @@ export const api = {
       return api.del(path);
     },
   },
+
+  // PUBLIC_INTERFACE
+  academics: {
+    /**
+     * Endpoints are placeholders and should be overridden to match your backend.
+     * Do not hardcode base URLs; they will be prefixed with REACT_APP_API_BASE/REACT_APP_BACKEND_URL.
+     */
+    endpoints: {
+      // Exams CRUD
+      listExams: '/exams',
+      createExam: '/exams',
+      updateExam: (id) => `/exams/${encodeURIComponent(id)}`,
+      deleteExam: (id) => `/exams/${encodeURIComponent(id)}`,
+
+      // Subjects and class-section helpers
+      listSubjects: '/subjects',
+      listStudentsForClassSection: (klass, section) =>
+        `/classes/${encodeURIComponent(klass)}/sections/${encodeURIComponent(section)}/students`,
+
+      // Marks
+      listMarks: ({ examId, klass, section }) =>
+        `/marks?examId=${encodeURIComponent(examId)}&class=${encodeURIComponent(klass)}&section=${encodeURIComponent(section)}`,
+      upsertMarks: '/marks',
+      deleteMark: (markId) => `/marks/${encodeURIComponent(markId)}`,
+
+      // Reports
+      getStudentReport: (studentId, examId) =>
+        `/reports/students/${encodeURIComponent(studentId)}?examId=${encodeURIComponent(examId)}`,
+    },
+
+    // PUBLIC_INTERFACE
+    async listExams() {
+      if (!config.baseUrl) return [];
+      return api.get(api.academics.endpoints.listExams);
+    },
+
+    // PUBLIC_INTERFACE
+    async createExam(payload) {
+      if (!config.baseUrl) return { ...payload, id: `tmp-${Date.now()}` };
+      return api.post(api.academics.endpoints.createExam, payload);
+    },
+
+    // PUBLIC_INTERFACE
+    async updateExam(id, payload) {
+      if (!config.baseUrl) return { id, ...payload };
+      const path = api.academics.endpoints.updateExam(id);
+      return api.put(path, payload);
+    },
+
+    // PUBLIC_INTERFACE
+    async deleteExam(id) {
+      if (!config.baseUrl) return { ok: true, id };
+      const path = api.academics.endpoints.deleteExam(id);
+      return api.del(path);
+    },
+
+    // PUBLIC_INTERFACE
+    async listSubjects() {
+      if (!config.baseUrl) {
+        // minimal default subjects in client-only mode
+        return [
+          { id: 'subj-eng', name: 'English' },
+          { id: 'subj-math', name: 'Mathematics' },
+          { id: 'subj-sci', name: 'Science' },
+        ];
+      }
+      return api.get(api.academics.endpoints.listSubjects);
+    },
+
+    // PUBLIC_INTERFACE
+    async listStudentsForClassSection(klass, section) {
+      if (!config.baseUrl) {
+        // client-only mode: return empty to avoid hard-coded data bleed
+        return [];
+      }
+      const path = api.academics.endpoints.listStudentsForClassSection(klass, section);
+      return api.get(path);
+    },
+
+    // PUBLIC_INTERFACE
+    async listMarks({ examId, klass, section }) {
+      if (!config.baseUrl) return []; // nothing persisted in client-only mode
+      const path = api.academics.endpoints.listMarks({ examId, klass, section });
+      return api.get(path);
+    },
+
+    // PUBLIC_INTERFACE
+    async upsertMarks(payload) {
+      /**
+       * payload: { examId, class, section, subjectId, entries: [{ studentId, score, markId? }] }
+       * Returns server result; client-only returns payload with fake ids for entries.
+       */
+      if (!config.baseUrl) {
+        return {
+          ...payload,
+          entries: (payload.entries || []).map((e) => ({ ...e, markId: e.markId || `tmp-${e.studentId}-${Date.now()}` })),
+        };
+      }
+      return api.post(api.academics.endpoints.upsertMarks, payload);
+    },
+
+    // PUBLIC_INTERFACE
+    async deleteMark(markId) {
+      if (!config.baseUrl) return { ok: true, markId };
+      const path = api.academics.endpoints.deleteMark(markId);
+      return api.del(path);
+    },
+
+    // PUBLIC_INTERFACE
+    async getStudentReport(studentId, examId) {
+      if (!config.baseUrl) {
+        // Client-only: return empty report
+        return { studentId, examId, marks: [], total: 0, average: 0, percentage: 0, grade: 'F' };
+      }
+      const path = api.academics.endpoints.getStudentReport(studentId, examId);
+      return api.get(path);
+    },
+  },
 };

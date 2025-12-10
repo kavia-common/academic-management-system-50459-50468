@@ -8,7 +8,7 @@ This project provides a minimal React template with a clean, modern UI and minim
 - **Modern UI**: Clean, responsive design with KAVIA brand styling
 - **Fast**: Minimal dependencies for quick loading times
 - **Simple**: Easy to understand and modify
-- **No Authentication**: All pages (Dashboard, Students, Courses, Attendance, Settings) are publicly accessible
+- **No Authentication**: All pages (Dashboard, Students, Courses, Attendance, Exams, Marks, Results, Settings) are publicly accessible
 
 ## Getting Started
 
@@ -37,29 +37,38 @@ The app reads URLs and simple settings from environment variables:
 
 Endpoints should not be hardcoded; configure via env variables.
 
-### Wiring real backend endpoints (Students)
+### Wiring real backend endpoints
 
-The student API client is defined in `src/api/client.js` under `api.students`. By default it uses these paths:
-- `GET ${REACT_APP_API_BASE}/students` - list students
-- `POST ${REACT_APP_API_BASE}/students` - create student
-- `PUT ${REACT_APP_API_BASE}/students/:id` - update student
-- `DELETE ${REACT_APP_API_BASE}/students/:id` - delete student
+API clients are defined in `src/api/client.js`:
+- `api.students` for students CRUD (see root README for default paths)
+- `api.academics` for exams, subjects, marks, and reports
+  - Override `api.academics.endpoints` to match your backend paths without changing code.
+  - Example:
+    ```js
+    import { api } from './src/api/client';
+    api.academics.endpoints = {
+      listExams: '/v1/exams',
+      createExam: '/v1/exams',
+      updateExam: (id) => `/v1/exams/${id}`,
+      deleteExam: (id) => `/v1/exams/${id}`,
+      listSubjects: '/v1/subjects',
+      listStudentsForClassSection: (klass, section) => `/v1/classes/${klass}/sections/${section}/students`,
+      listMarks: ({ examId, klass, section }) => `/v1/marks?examId=${examId}&class=${klass}&section=${section}`,
+      upsertMarks: '/v1/marks',
+      deleteMark: (markId) => `/v1/marks/${markId}`,
+      getStudentReport: (studentId, examId) => `/v1/reports/students/${studentId}?examId=${examId}`,
+    };
+    ```
 
-If your backend uses different paths, update them at runtime by overriding endpoints:
-```js
-import { api } from './api/client';
+### Grades and results
 
-api.students.endpoints = {
-  list: '/v1/sis/students',
-  create: '/v1/sis/students',
-  update: (id) => `/v1/sis/students/${id}`,
-  delete: (id) => `/v1/sis/students/${id}`,
-};
-```
+Use `src/utils/grades.js`:
+- Configurable thresholds (A/B/C/D/F) and helpers to compute total, average, percentage, and overall grade.
+- The Results page uses these utilities to show per-student performance and export CSV.
 
 Notes:
-- When `REACT_APP_API_BASE` is not set, the frontend runs in client-only mode. The Students page still works with local state and optimistic patterns; network calls are no-ops that return mock-like results.
-- Required student fields: `name`, `class`, `section`, `rollNumber`. The UI validates required fields and ensures `rollNumber` is unique within a `class + section` combination.
+- When `REACT_APP_API_BASE` is not set, the frontend runs in client-only mode. Exams/Marks/Results operate in a minimal safe mode with optimistic UI; no persistence is guaranteed.
+- Marks entry validates inputs to 0–100 by default.
 
 ## Learn More
 

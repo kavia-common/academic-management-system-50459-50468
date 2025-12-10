@@ -9,6 +9,9 @@ export default function Sidebar() {
     { to: '/students', label: 'Students' },
     { to: '/courses', label: 'Courses' },
     { to: '/attendance', label: 'Attendance' },
+    { to: '/exams', label: 'Exams' },
+    { to: '/marks', label: 'Marks' },
+    { to: '/results', label: 'Results' },
     { to: '/settings', label: 'Settings' },
   ];
 
