@@ -15,3 +15,6 @@ Implemented:
 - API client reads base URL from REACT_APP_API_BASE or REACT_APP_BACKEND_URL
 - Config module for environment variables
 - Accessibility: semantic roles, focus outlines, color contrast
+- Authentication: Login page (/login), AuthProvider with token persistence, protected routes, role-based access (admin vs teacher), logout in Sidebar/Topbar.
+  - Placeholder endpoints: POST /auth/login, GET /auth/me
+  - Reads base URL from REACT_APP_API_BASE / REACT_APP_BACKEND_URL
